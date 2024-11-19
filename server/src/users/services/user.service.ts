@@ -5,6 +5,18 @@ import { CreateUserDTO } from "../dtos/create-user.dto";
 import User from "../models/user.model";
 
 export class UsersService {
+  static #instance: UsersService;
+
+  private constructor() {}
+
+  public static get instance(): UsersService {
+    if (!UsersService.#instance) {
+      UsersService.#instance = new UsersService();
+    }
+
+    return UsersService.#instance;
+  }
+
   async findUser(username: string) {
     const user = await User.findOne({ username });
 

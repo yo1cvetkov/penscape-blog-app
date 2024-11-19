@@ -5,6 +5,6 @@ export class ConflictException extends Error {
     super(message);
     this.statusCode = 409;
 
-    Object.setPrototypeOf(this, ConflictException);
+    Object.setPrototypeOf(this, ConflictException.prototype);
   }
 }
