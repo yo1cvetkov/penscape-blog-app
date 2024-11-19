@@ -2,18 +2,28 @@ import { IsString, IsEmail, IsOptional, MinLength, IsStrongPassword, IsEnum } fr
 import { UserRole } from "../../shared/UserRole.enum";
 
 export class CreateUserDTO {
-  @IsString()
-  @MinLength(3)
+  @IsString({ message: "Username is required." })
+  @MinLength(3, { message: "Username must be at least 3 characters long." })
   username: string;
 
-  @IsEmail()
+  @IsEmail(
+    {},
+    {
+      message: "Please provide an valid email",
+    }
+  )
   email: string;
 
-  @IsStrongPassword()
+  @IsStrongPassword(
+    {
+      minLength: 12,
+    },
+    { message: "Password is too weak" }
+  )
   @MinLength(12)
   password: string;
 
-  @IsEnum(UserRole)
+  @IsEnum(UserRole, { message: "Invalid role type" })
   @IsOptional()
   role: UserRole;
 

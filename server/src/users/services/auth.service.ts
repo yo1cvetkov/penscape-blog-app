@@ -22,7 +22,7 @@ export class AuthService {
     const errors = await validate(createUserDto);
 
     if (errors.length > 0) {
-      throw new BadRequestException(Object.values(errors).toString()); // FIXME: Fix this
+      throw new BadRequestException(Object.values(errors[0].constraints!)[0]);
     }
 
     const existingEmail = await User.findOne({ email: createUserDto.email });
