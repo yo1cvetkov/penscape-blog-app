@@ -9,8 +9,18 @@ import FormTextarea from "../../../components/ui/FormTextarea";
 import { registerSchema, RegisterSchema } from "../schemas/register.schema";
 import toast from "react-hot-toast";
 import Button from "../../../components/ui/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { setIsAuthenticated } from "../state/authSlice";
+import { useRegisterMutation } from "../api/authApiSlice";
 
 function RegisterForm() {
+  //const authState = useSelector((state: RootState) => state.auth);
+
+  // const dispatch = useDispatch();
+
+  const [registerMutation, { isLoading, isError }] = useRegisterMutation();
+
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -22,15 +32,23 @@ function RegisterForm() {
     },
   });
 
-  const onSubmit: SubmitHandler<RegisterSchema> = (data) => {
-    console.log(data);
-    toast.success("Form submitted");
+  console.log(form.formState.errors);
+
+  const onSubmit: SubmitHandler<RegisterSchema> = async (data) => {
+    console.log("clicked");
+    try {
+      await registerMutation({ email: data.email, username: data.username, password: data.password, bio: data.bio });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  //console.log(authState.isAuthenticated);
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Fieldset as="div" className="space-y-6 rounded-xl p-6 sm:p-10">
-        <Legend className="text-base/7 font-semibold ">Personal details</Legend>
+      <Fieldset as="div" className="p-6 space-y-6 rounded-xl sm:p-10">
+        <Legend className="font-semibold text-base/7 ">Personal details</Legend>
         <Field as="div">
           <FormLabel htmlFor="username" required>
             Username
@@ -90,7 +108,8 @@ function RegisterForm() {
           >
             Already have an account?
           </Link>
-          <Button>Create an account</Button>
+          <Button type="submit">{isLoading ? "Loading..." : "Create an account"}</Button>
+          {/* <Button onClick={() => dispatch(setIsAuthenticated())}>Set is authenticated</Button> */}
         </div>
       </Fieldset>
     </form>

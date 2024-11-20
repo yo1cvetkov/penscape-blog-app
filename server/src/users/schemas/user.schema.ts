@@ -15,7 +15,7 @@ const UserSchema: Schema = new Schema(
     profilePicture: {
       type: String,
       required: false,
-      unique: true,
+      default: "",
     },
     bio: {
       type: String,
