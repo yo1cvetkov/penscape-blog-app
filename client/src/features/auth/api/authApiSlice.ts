@@ -14,7 +14,7 @@ export const authApiSlice = createApi({
           body: userPayload,
         }),
       }),
-      login: builder.mutation<void, { email: string; password: string }>({
+      login: builder.mutation<void, { username: string; password: string }>({
         query: (credentials) => ({
           url: "/auth/login",
           method: "POST",

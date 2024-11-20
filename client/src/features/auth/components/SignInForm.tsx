@@ -2,12 +2,14 @@ import { Field, Fieldset, Legend } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../../../components/ui/Button";
 import FormInput from "../../../components/ui/FormInput";
 import FormInputError from "../../../components/ui/FormInputError";
 import FormLabel from "../../../components/ui/FormLabel";
 import { signInSchema, SignInSchema } from "../schemas/signIn.schema";
+import { useLoginMutation } from "../api/authApiSlice";
+import Spinner from "../../../components/ui/Spinner";
 
 function SignInForm() {
   const form = useForm<SignInSchema>({
@@ -18,15 +20,24 @@ function SignInForm() {
     },
   });
 
-  const onSubmit: SubmitHandler<SignInSchema> = (data) => {
-    console.log(data);
-    toast.success("Form submitted");
+  const [loginMutation, { isLoading, isError, error }] = useLoginMutation();
+
+  const navigate = useNavigate();
+
+  const onSubmit: SubmitHandler<SignInSchema> = async (data) => {
+    try {
+      await loginMutation({ username: data.username, password: data.password }).unwrap();
+      toast.success("You've successfully logged in.", { duration: 2000 });
+      navigate("/", { viewTransition: true });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <Fieldset as="div" className="space-y-6 rounded-xl p-6 sm:p-10">
-        <Legend className="text-base/7 font-semibold ">Enter your account credentials</Legend>
+      <Fieldset as="div" className="p-6 space-y-6 rounded-xl sm:p-10">
+        <Legend className="font-semibold text-base/7 ">Enter your account credentials</Legend>
         <Field as="div">
           <FormLabel htmlFor="username" required>
             Username
@@ -34,7 +45,15 @@ function SignInForm() {
           <Controller
             control={form.control}
             name="username"
-            render={({ field }) => <FormInput hasErrors={!!form.formState.errors.username?.message} type="text" id="username" {...field} />}
+            render={({ field }) => (
+              <FormInput
+                disabled={isLoading || form.formState.isSubmitting}
+                hasErrors={!!form.formState.errors.username?.message}
+                type="text"
+                id="username"
+                {...field}
+              />
+            )}
           />
           <FormInputError>{form.formState.errors.username?.message}</FormInputError>
         </Field>
@@ -46,7 +65,15 @@ function SignInForm() {
           <Controller
             control={form.control}
             name="password"
-            render={({ field }) => <FormInput hasErrors={!!form.formState.errors.password?.message} id="password" type="password" {...field} />}
+            render={({ field }) => (
+              <FormInput
+                disabled={isLoading || form.formState.isSubmitting}
+                hasErrors={!!form.formState.errors.password?.message}
+                id="password"
+                type="password"
+                {...field}
+              />
+            )}
           />
           <FormInputError>{form.formState.errors.password?.message}</FormInputError>
         </Field>
@@ -59,7 +86,16 @@ function SignInForm() {
           >
             Don't have an account?
           </Link>
-          <Button>Sign in</Button>
+          <Button type="submit" disabled={isLoading || form.formState.isSubmitting}>
+            {isLoading || form.formState.isSubmitting ? (
+              <div className="flex items-center gap-x-3">
+                <Spinner />
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              "Sign in"
+            )}
+          </Button>
         </div>
       </Fieldset>
     </form>
