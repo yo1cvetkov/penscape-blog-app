@@ -12,7 +12,7 @@ const FormInput = React.forwardRef(function FormInput({ hasErrors, ...props }: F
       {...props}
       className={`mt-1 block w-full rounded-lg border ${
         hasErrors && "border-red-400"
-      } py-1.5 px-3 text-sm/6  focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
+      } py-1.5 px-3 text-sm/6 disabled:cursor-not-allowed disabled:opacity-50  focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25`}
     />
   );
 });

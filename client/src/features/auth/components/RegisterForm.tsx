@@ -1,7 +1,7 @@
 import { Description, Field, Fieldset, Legend } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormInput from "../../../components/ui/FormInput";
 import FormInputError from "../../../components/ui/FormInputError";
 import FormLabel from "../../../components/ui/FormLabel";
@@ -13,13 +13,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { setIsAuthenticated } from "../state/authSlice";
 import { useRegisterMutation } from "../api/authApiSlice";
+import { getErrorMessage, isFetchBaseQueryError } from "../../../helpers/error";
+import Spinner from "../../../components/ui/Spinner";
+import FormError from "../../../components/ui/FormError";
 
 function RegisterForm() {
   //const authState = useSelector((state: RootState) => state.auth);
 
   // const dispatch = useDispatch();
 
-  const [registerMutation, { isLoading, isError }] = useRegisterMutation();
+  const [registerMutation, { isLoading, isError, error }] = useRegisterMutation();
+
+  const navigate = useNavigate();
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -32,12 +37,11 @@ function RegisterForm() {
     },
   });
 
-  console.log(form.formState.errors);
-
   const onSubmit: SubmitHandler<RegisterSchema> = async (data) => {
-    console.log("clicked");
     try {
-      await registerMutation({ email: data.email, username: data.username, password: data.password, bio: data.bio });
+      await registerMutation({ email: data.email, username: data.username, password: data.password, bio: data.bio }).unwrap();
+      toast.success("You've successfully registered. Please sign in", { duration: 4000 });
+      navigate("/signin", { viewTransition: true });
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +61,15 @@ function RegisterForm() {
           <Controller
             control={form.control}
             name="username"
-            render={({ field }) => <FormInput hasErrors={!!form.formState.errors.username?.message} type="text" id="username" {...field} />}
+            render={({ field }) => (
+              <FormInput
+                disabled={isLoading || form.formState.isSubmitting}
+                hasErrors={!!form.formState.errors.username?.message}
+                type="text"
+                id="username"
+                {...field}
+              />
+            )}
           />
           <FormInputError>{form.formState.errors.username?.message}</FormInputError>
         </Field>
@@ -68,7 +80,15 @@ function RegisterForm() {
           <Controller
             control={form.control}
             name="email"
-            render={({ field }) => <FormInput hasErrors={!!form.formState.errors.email?.message} id="email" type="email" {...field} />}
+            render={({ field }) => (
+              <FormInput
+                disabled={isLoading || form.formState.isSubmitting}
+                hasErrors={!!form.formState.errors.email?.message}
+                id="email"
+                type="email"
+                {...field}
+              />
+            )}
           />
           <FormInputError>{form.formState.errors.email?.message}</FormInputError>
         </Field>
@@ -80,7 +100,15 @@ function RegisterForm() {
           <Controller
             control={form.control}
             name="password"
-            render={({ field }) => <FormInput hasErrors={!!form.formState.errors.password?.message} id="password" type="password" {...field} />}
+            render={({ field }) => (
+              <FormInput
+                disabled={isLoading || form.formState.isSubmitting}
+                hasErrors={!!form.formState.errors.password?.message}
+                id="password"
+                type="password"
+                {...field}
+              />
+            )}
           />
           <FormInputError>{form.formState.errors.password?.message}</FormInputError>
         </Field>
@@ -91,15 +119,29 @@ function RegisterForm() {
           <Controller
             control={form.control}
             name="repeatPassword"
-            render={({ field }) => <FormInput id="repeatPassword" type="password" {...field} hasErrors={!!form.formState.errors.repeatPassword?.message} />}
+            render={({ field }) => (
+              <FormInput
+                disabled={isLoading || form.formState.isSubmitting}
+                id="repeatPassword"
+                type="password"
+                {...field}
+                hasErrors={!!form.formState.errors.repeatPassword?.message}
+              />
+            )}
           />
           <FormInputError>{form.formState.errors.repeatPassword?.message}</FormInputError>
         </Field>
         <Field>
           <FormLabel htmlFor="bio">Bio</FormLabel>
           <Description className="text-sm/6 text-slate-500">Say something about you. (optional)</Description>
-          <Controller name="bio" control={form.control} render={({ field }) => <FormTextarea id="bio" {...field} />} />
+          <Controller
+            name="bio"
+            control={form.control}
+            render={({ field }) => <FormTextarea disabled={isLoading || form.formState.isSubmitting} id="bio" {...field} />}
+          />
         </Field>
+        {isError && error ? <FormError error={error} /> : null}
+
         <div className="flex items-center justify-between">
           <Link
             viewTransition
@@ -108,7 +150,16 @@ function RegisterForm() {
           >
             Already have an account?
           </Link>
-          <Button type="submit">{isLoading ? "Loading..." : "Create an account"}</Button>
+          <Button type="submit" disabled={isLoading || form.formState.isSubmitting}>
+            {isLoading || form.formState.isSubmitting ? (
+              <div className="flex items-center gap-x-3">
+                <Spinner />
+                <span>Submitting...</span>
+              </div>
+            ) : (
+              "Create an account"
+            )}
+          </Button>
           {/* <Button onClick={() => dispatch(setIsAuthenticated())}>Set is authenticated</Button> */}
         </div>
       </Fieldset>

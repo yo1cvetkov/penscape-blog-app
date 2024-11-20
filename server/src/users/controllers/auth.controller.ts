@@ -15,9 +15,9 @@ export class AuthController {
       res.status(201).json(user);
     } catch (error) {
       if (error instanceof ConflictException) {
-        res.status(409).json(error.message);
+        res.status(409).json({ message: error.message, cause: error });
       } else if (error instanceof BadRequestException) {
-        res.status(400).json(error.message);
+        res.status(400).json({ message: error.message, cause: error });
       } else {
         res.status(500).json({ message: "Something went wrong.", cause: error });
       }
