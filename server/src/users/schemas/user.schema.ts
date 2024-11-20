@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { UserRole } from "../../shared/UserRole.enum";
+import { UserRole } from "../../shared/types/UserRole.enum";
 
 const UserSchema: Schema = new Schema(
   {

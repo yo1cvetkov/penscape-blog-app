@@ -1,8 +1,7 @@
 import mongoose from "mongoose";
 import app from "./server";
 import * as dotenv from "dotenv";
-
-dotenv.config();
+import "reflect-metadata";
 
 const PORT = process.env.PORT || 3000;
 

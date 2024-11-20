@@ -1,5 +1,5 @@
 import mongoose, { Document, Model } from "mongoose";
-import { UserRole } from "../../shared/UserRole.enum";
+import { UserRole } from "../../shared/types/UserRole.enum";
 import UserSchema from "../schemas/user.schema";
 
 export interface IUser extends Document {

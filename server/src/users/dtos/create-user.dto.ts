@@ -1,5 +1,5 @@
 import { IsString, IsEmail, IsOptional, MinLength, IsStrongPassword, IsEnum } from "class-validator";
-import { UserRole } from "../../shared/UserRole.enum";
+import { UserRole } from "../../shared/types/UserRole.enum";
 
 export class CreateUserDTO {
   @IsString({ message: "Username is required." })

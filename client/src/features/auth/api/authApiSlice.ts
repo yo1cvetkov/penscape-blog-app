@@ -1,22 +1,47 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { CreateUser, User } from "../types/User";
+import baseQueryWithReauth from "../../../baseQuery";
 
 export const authApiSlice = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/api/auth",
-  }),
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => {
     return {
       register: builder.mutation<User, CreateUser>({
         query: (userPayload) => ({
-          url: "/register",
+          url: "/auth/register",
           method: "POST",
           body: userPayload,
+        }),
+      }),
+      login: builder.mutation<void, { email: string; password: string }>({
+        query: (credentials) => ({
+          url: "/auth/login",
+          method: "POST",
+          body: credentials,
+        }),
+      }),
+      refreshToken: builder.mutation<void, void>({
+        query: () => ({
+          url: "/auth/refresh",
+          method: "POST",
+          credentials: "include",
+        }),
+      }),
+      logout: builder.mutation<void, void>({
+        query: () => ({
+          url: "/auth/logout",
+          method: "POST",
+        }),
+      }),
+      getUser: builder.query<User, void>({
+        query: () => ({
+          url: "/auth/me",
+          method: "GET",
         }),
       }),
     };
   },
 });
 
-export const { useRegisterMutation } = authApiSlice;
+export const { useRegisterMutation, useGetUserQuery, useLoginMutation, useLogoutMutation, useRefreshTokenMutation } = authApiSlice;

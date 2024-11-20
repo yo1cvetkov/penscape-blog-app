@@ -1,8 +1,10 @@
+import { plainToInstance } from "class-transformer";
 import { ConflictException } from "../../shared/exceptions/ConflictException";
 import { NotFoundException } from "../../shared/exceptions/NotFoundException";
-import { UserRole } from "../../shared/UserRole.enum";
+import { UserRole } from "../../shared/types/UserRole.enum";
 import { CreateUserDTO } from "../dtos/create-user.dto";
 import User from "../models/user.model";
+import { UserDTO } from "../dtos/user.dto";
 
 export class UsersService {
   static #instance: UsersService;
@@ -21,10 +23,22 @@ export class UsersService {
     const user = await User.findOne({ username });
 
     if (!user) {
-      throw new NotFoundException("User not found.");
+      throw new NotFoundException("User with a given username does not exist.");
     }
 
     return user;
+  }
+
+  async findUserById(id: string) {
+    const user = await User.findById(id);
+
+    if (!user) {
+      throw new NotFoundException("User not found.");
+    }
+
+    const userDto = plainToInstance(UserDTO, user.toObject(), { excludeExtraneousValues: true });
+
+    return userDto;
   }
 
   async createUser({
