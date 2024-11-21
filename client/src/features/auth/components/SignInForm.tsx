@@ -10,6 +10,7 @@ import FormLabel from "../../../components/ui/FormLabel";
 import { signInSchema, SignInSchema } from "../schemas/signIn.schema";
 import { useLoginMutation } from "../api/authApiSlice";
 import Spinner from "../../../components/ui/Spinner";
+import FormError from "../../../components/ui/FormError";
 
 function SignInForm() {
   const form = useForm<SignInSchema>({
@@ -78,6 +79,7 @@ function SignInForm() {
           <FormInputError>{form.formState.errors.password?.message}</FormInputError>
         </Field>
 
+        {isError && error ? <FormError error={error} /> : null}
         <div className="flex items-center justify-between">
           <Link
             viewTransition

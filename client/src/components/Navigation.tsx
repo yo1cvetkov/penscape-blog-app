@@ -1,6 +1,9 @@
+import { useSelector } from "react-redux";
 import AuthRoutes from "./AuthRoutes";
 import Logo from "./Logo";
 import NavRoutes from "./NavRoutes";
+import { RootState } from "../store";
+import ProfileDropdown from "../features/auth/components/ProfileDropdown";
 
 export type Route = {
   label: string;
@@ -15,13 +18,15 @@ const routes: Route[] = [
 ];
 
 function Navigation() {
+  const user = useSelector((state: RootState) => state.auth.user);
+
   return (
     <div className="border-b shadow-sm">
-      <div className="container mx-auto flex gap-x-20 items-center px-4 py-4">
+      <div className="container flex items-center px-4 py-4 mx-auto gap-x-20">
         <Logo />
-        <nav className="flex items-center w-full justify-between">
+        <nav className="relative flex items-center justify-between w-full">
           <NavRoutes routes={routes} />
-          <AuthRoutes />
+          {user ? <ProfileDropdown /> : <AuthRoutes />}
         </nav>
       </div>
     </div>

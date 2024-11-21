@@ -12,7 +12,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   if (result.error && result.error.status === 401) {
     const refreshResult = await baseQuery(
       {
-        url: "/auth/register",
+        url: "/auth/refresh",
         method: "POST",
       },
       api,

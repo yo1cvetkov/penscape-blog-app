@@ -10,6 +10,7 @@ export type User = {
   email: string;
   role: UserRole;
   bio?: string;
+  createdAt: Date;
 };
 
 export type CreateUser = {
