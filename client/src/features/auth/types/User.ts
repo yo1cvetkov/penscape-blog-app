@@ -9,6 +9,7 @@ export type User = {
   username: string;
   email: string;
   role: UserRole;
+  profilePicture?: string;
   bio?: string;
   createdAt: Date;
 };

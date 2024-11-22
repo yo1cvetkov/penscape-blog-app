@@ -35,7 +35,18 @@ export class FileService {
 
     await s3.send(putCommand);
 
-    const url = `https://${process.env.BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${name}`;
+    return name;
+  }
+
+  async generateSignedUrl(name: string) {
+    const getObjectParams: GetObjectCommandInput = {
+      Bucket: process.env.BUCKET_NAME!,
+      Key: name,
+    };
+
+    const command = new GetObjectCommand(getObjectParams);
+
+    const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
 
     return url;
   }

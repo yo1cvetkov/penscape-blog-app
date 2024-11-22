@@ -34,23 +34,31 @@ export class UsersService {
   async findUserById(id: string) {
     const user = await User.findById(id);
 
+    console.log(id);
+
     if (!user) {
       throw new NotFoundException("User not found.");
     }
 
-    const userDto = plainToInstance(UserDTO, user.toObject(), { excludeExtraneousValues: true });
+    // const userDto = plainToInstance(UserDTO, user.toObject(), { excludeExtraneousValues: true });
 
-    return userDto;
+    console.log(user);
+
+    if (user.profilePicture) {
+      const url = await FileService.instance.generateSignedUrl(user.profilePicture);
+      user.profilePicture = url;
+    }
+    return user;
   }
 
   async updateUserProfilePicture(userId: string, file: Express.Multer.File) {
     const buffer = await sharp(file.buffer).resize({ height: 100, width: 100, fit: "contain" }).toBuffer();
 
-    const url = await FileService.instance.uploadFileToS3(file, buffer);
+    const name = await FileService.instance.uploadFileToS3(file, buffer);
 
-    await User.findByIdAndUpdate(userId, { profilePicture: url });
+    const user = await User.findByIdAndUpdate(userId, { profilePicture: name });
 
-    return url;
+    return name;
   }
 
   async createUser({

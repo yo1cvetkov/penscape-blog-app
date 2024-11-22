@@ -17,6 +17,8 @@ function AvatarUpload() {
 
   const user = useSelector((state: RootState) => state.auth.user);
 
+  console.log(user);
+
   const [updateAvatarMutation, { isLoading }] = useUpdateAvatarMutation();
 
   const onUpload = () => {
@@ -46,19 +48,19 @@ function AvatarUpload() {
     formData.append("file", selectedFile);
 
     try {
-      // await updateAvatarMutation({ formData, id: user?._id }).unwrap();
-      const url = await axios
-        .patch(`http://localhost:3000/api/users/${user._id}/avatar`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          withCredentials: true,
-        })
-        .then((res) => res.data);
+      await updateAvatarMutation({ formData, id: user?._id }).unwrap();
+      // const url = await axios
+      //   .patch(`http://localhost:3000/api/users/${user._id}/avatar`, formData, {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //     withCredentials: true,
+      //   })
+      //   .then((res) => res.data);
 
-      setAvatar(url);
+      // setAvatar(url);
 
-      console.log(url);
+      // console.log(url);
     } catch (error) {
       console.log(error);
     }
@@ -84,6 +86,7 @@ function AvatarUpload() {
             </span>
           </div>
         )}
+        <img src={user?.profilePicture} />
       </button>
       {selectedFile ? (
         <div className="flex items-center gap-x-2">

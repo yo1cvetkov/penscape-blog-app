@@ -21,6 +21,10 @@ export class UserDTO {
 
   @IsString()
   @Expose()
+  profilePicture: string;
+
+  @IsString()
+  @Expose()
   bio: string;
 
   @Exclude()

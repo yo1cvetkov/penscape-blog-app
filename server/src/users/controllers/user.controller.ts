@@ -22,15 +22,17 @@ export class UserController {
   async updateUserAvatar(req: Request, res: Response): Promise<void> {
     const userId = req.params.id;
 
+    console.log(userId);
+
     if (!req.file || !userId) {
       res.status(400).json({ message: "File is missing" });
       return;
     }
 
     try {
-      const url = await UsersService.instance.updateUserProfilePicture(userId, req.file);
+      const name = await UsersService.instance.updateUserProfilePicture(userId, req.file);
 
-      res.status(201).json(url);
+      res.status(201).json(name);
     } catch (error) {
       console.log(error);
       res.status(500).json({ messsage: "Something went wrong" });
