@@ -11,6 +11,8 @@ import { signInSchema, SignInSchema } from "../schemas/signIn.schema";
 import { useLoginMutation } from "../api/authApiSlice";
 import Spinner from "../../../components/ui/Spinner";
 import FormError from "../../../components/ui/FormError";
+import { useDispatch } from "react-redux";
+import { setIsAuthenticated } from "../state/authSlice";
 
 function SignInForm() {
   const form = useForm<SignInSchema>({
@@ -22,6 +24,7 @@ function SignInForm() {
   });
 
   const [loginMutation, { isLoading, isError, error }] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -29,6 +32,7 @@ function SignInForm() {
     try {
       await loginMutation({ username: data.username, password: data.password }).unwrap();
       toast.success("You've successfully logged in.", { duration: 2000 });
+      dispatch(setIsAuthenticated(true));
       navigate("/", { viewTransition: true });
     } catch (error) {
       console.log(error);

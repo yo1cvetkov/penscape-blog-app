@@ -5,6 +5,7 @@ import baseQueryWithReauth from "../../../baseQuery";
 export const authApiSlice = createApi({
   reducerPath: "authApi",
   baseQuery: baseQueryWithReauth,
+  tagTypes: ["User"],
   endpoints: (builder) => {
     return {
       register: builder.mutation<User, CreateUser>({
@@ -20,6 +21,7 @@ export const authApiSlice = createApi({
           method: "POST",
           body: credentials,
         }),
+        invalidatesTags: ["User"],
       }),
       refreshToken: builder.mutation<void, void>({
         query: () => ({
@@ -33,12 +35,14 @@ export const authApiSlice = createApi({
           url: "/auth/logout",
           method: "POST",
         }),
+        invalidatesTags: ["User"],
       }),
       getUser: builder.query<User, void>({
         query: () => ({
           url: "/auth/me",
           method: "GET",
         }),
+        providesTags: ["User"],
       }),
     };
   },

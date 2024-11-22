@@ -18,7 +18,7 @@ const routes: Route[] = [
 ];
 
 function Navigation() {
-  const user = useSelector((state: RootState) => state.auth.user);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   return (
     <div className="border-b shadow-sm">
@@ -26,7 +26,7 @@ function Navigation() {
         <Logo />
         <nav className="relative flex items-center justify-between w-full">
           <NavRoutes routes={routes} />
-          {user ? <ProfileDropdown /> : <AuthRoutes />}
+          {isAuthenticated ? <ProfileDropdown /> : <AuthRoutes />}
         </nav>
       </div>
     </div>

@@ -1,12 +1,23 @@
-import { ArrowUpTrayIcon } from "@heroicons/react/20/solid";
+import { ArrowUpTrayIcon, CheckIcon } from "@heroicons/react/20/solid";
 import React, { useRef, useState } from "react";
 import { cn } from "../../../helpers/cn";
+import { Button } from "@headlessui/react";
+import { useUpdateAvatarMutation } from "../api/profileApiSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import axios from "axios";
 
 function AvatarUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
+  const [avatar, setAvatar] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const [updateAvatarMutation, { isLoading }] = useUpdateAvatarMutation();
 
   const onUpload = () => {
     if (fileInputRef.current) {
@@ -26,9 +37,36 @@ function AvatarUpload() {
     }
   };
 
+  const onUpdateAvatar = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!selectedFile || !user) return;
+
+    const formData = new FormData();
+
+    formData.append("file", selectedFile);
+
+    try {
+      // await updateAvatarMutation({ formData, id: user?._id }).unwrap();
+      const url = await axios
+        .patch(`http://localhost:3000/api/users/${user._id}/avatar`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        })
+        .then((res) => res.data);
+
+      setAvatar(url);
+
+      console.log(url);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <>
-      <input ref={fileInputRef} hidden type="file" aria-hidden="true" onChange={onFileChange} />
+    <form onSubmit={onUpdateAvatar}>
+      <input ref={fileInputRef} hidden name="file" type="file" aria-hidden="true" onChange={onFileChange} />
       <button
         className={cn(
           "relative block overflow-hidden bg-gray-200 border border-gray-400 rounded-full cursor-pointer size-20 group",
@@ -47,7 +85,20 @@ function AvatarUpload() {
           </div>
         )}
       </button>
-    </>
+      {selectedFile ? (
+        <div className="flex items-center gap-x-2">
+          <span className="text-sm">Save avatar?</span>
+          <Button type="submit" className="p-1 transition duration-200 rounded-full hover:bg-emerald-50">
+            <CheckIcon className="size-4 fill-emerald-400" />
+          </Button>
+        </div>
+      ) : null}
+      {avatar && (
+        <div>
+          <img src={avatar} />
+        </div>
+      )}
+    </form>
   );
 }
 

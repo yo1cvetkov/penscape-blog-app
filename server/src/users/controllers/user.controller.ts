@@ -18,4 +18,22 @@ export class UserController {
       res.status(500).json({ message: "Something went wrong." });
     }
   }
+
+  async updateUserAvatar(req: Request, res: Response): Promise<void> {
+    const userId = req.params.id;
+
+    if (!req.file || !userId) {
+      res.status(400).json({ message: "File is missing" });
+      return;
+    }
+
+    try {
+      const url = await UsersService.instance.updateUserProfilePicture(userId, req.file);
+
+      res.status(201).json(url);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ messsage: "Something went wrong" });
+    }
+  }
 }

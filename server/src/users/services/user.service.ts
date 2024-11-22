@@ -5,6 +5,8 @@ import { UserRole } from "../../shared/types/UserRole.enum";
 import { CreateUserDTO } from "../dtos/create-user.dto";
 import User from "../models/user.model";
 import { UserDTO } from "../dtos/user.dto";
+import { FileService } from "../../files/services/file.service";
+import sharp from "sharp";
 
 export class UsersService {
   static #instance: UsersService;
@@ -39,6 +41,16 @@ export class UsersService {
     const userDto = plainToInstance(UserDTO, user.toObject(), { excludeExtraneousValues: true });
 
     return userDto;
+  }
+
+  async updateUserProfilePicture(userId: string, file: Express.Multer.File) {
+    const buffer = await sharp(file.buffer).resize({ height: 100, width: 100, fit: "contain" }).toBuffer();
+
+    const url = await FileService.instance.uploadFileToS3(file, buffer);
+
+    await User.findByIdAndUpdate(userId, { profilePicture: url });
+
+    return url;
   }
 
   async createUser({
