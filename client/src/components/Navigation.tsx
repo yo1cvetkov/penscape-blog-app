@@ -3,7 +3,7 @@ import AuthRoutes from "./AuthRoutes";
 import Logo from "./Logo";
 import NavRoutes from "./NavRoutes";
 import { RootState } from "../store";
-import ProfileDropdown from "../features/auth/components/ProfileDropdown";
+import ProfileDropdown from "../features/profile/components/ProfileDropdown";
 
 export type Route = {
   label: string;
