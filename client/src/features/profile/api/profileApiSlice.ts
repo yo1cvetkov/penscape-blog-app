@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQueryWithReauth from "../../../baseQuery";
+import { authApiSlice } from "../../auth/api/authApiSlice";
 
 interface UpdateAvatarParams {
   formData: FormData;
@@ -16,10 +17,14 @@ export const profileApiSlice = createApi({
           url: `/users/${id}/avatar`,
           method: "PATCH",
           body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
         }),
+        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled;
+
+            dispatch(authApiSlice.util.invalidateTags(["User"]));
+          } catch {}
+        },
       }),
     };
   },
