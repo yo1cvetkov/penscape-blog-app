@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@blocknote/core": "^0.19.2",
+    "@blocknote/mantine": "^0.19.2",
+    "@blocknote/react": "^0.19.2",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.1",

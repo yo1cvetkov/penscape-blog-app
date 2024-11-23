@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import { checkUserLoader } from "./loaders/checkUserLoader";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
+import CreatePostPage from "./pages/CreatePostPage";
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,11 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfilePage />,
+        loader: checkUserLoader,
+      },
+      {
+        path: "/post/create",
+        element: <CreatePostPage />,
         loader: checkUserLoader,
       },
     ],

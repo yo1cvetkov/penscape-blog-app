@@ -1,4 +1,3 @@
-import { useLoaderData } from "react-router-dom";
 import CardWrapper from "../components/ui/CardWrapper";
 import { User, UserRole } from "../features/auth/types/User";
 import AvatarUpload from "../features/profile/components/AvatarUpload";

@@ -1,7 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQueryWithReauth from "../../../baseQuery";
 import { authApiSlice } from "../../auth/api/authApiSlice";
-import { setUser } from "../../auth/state/authSlice";
 import { User } from "../../auth/types/User";
 
 interface UpdateAvatarParams {
