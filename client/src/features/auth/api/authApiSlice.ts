@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { CreateUser, User } from "../types/User";
 import baseQueryWithReauth from "../../../baseQuery";
+import { clearUser, setUser } from "../state/authSlice";
 
 export const authApiSlice = createApi({
   reducerPath: "authApi",
@@ -42,6 +43,14 @@ export const authApiSlice = createApi({
           url: "/auth/me",
           method: "GET",
         }),
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          try {
+            const { data } = await queryFulfilled;
+            dispatch(setUser(data));
+          } catch (error) {
+            dispatch(clearUser());
+          }
+        },
         providesTags: ["User"],
       }),
     };

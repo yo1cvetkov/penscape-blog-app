@@ -1,12 +1,10 @@
-import { plainToInstance } from "class-transformer";
-import { ConflictException } from "../../shared/exceptions/ConflictException";
 import { NotFoundException } from "../../shared/exceptions/NotFoundException";
 import { UserRole } from "../../shared/types/UserRole.enum";
-import { CreateUserDTO } from "../dtos/create-user.dto";
 import User from "../models/user.model";
-import { UserDTO } from "../dtos/user.dto";
 import { FileService } from "../../files/services/file.service";
-import sharp from "sharp";
+import { UpdateUserDTO } from "../dtos/update-user.dto";
+import { validate } from "class-validator";
+import { BadRequestException } from "../../shared/exceptions/BadRequestException";
 
 export class UsersService {
   static #instance: UsersService;
@@ -34,29 +32,23 @@ export class UsersService {
   async findUserById(id: string) {
     const user = await User.findById(id);
 
-    console.log(id);
-
     if (!user) {
       throw new NotFoundException("User not found.");
     }
 
-    // const userDto = plainToInstance(UserDTO, user.toObject(), { excludeExtraneousValues: true });
+    const { password, ...userData } = user.toObject();
 
-    console.log(user);
-
-    if (user.profilePicture) {
-      const url = await FileService.instance.generateSignedUrl(user.profilePicture);
-      user.profilePicture = url;
+    if (userData.profilePicture) {
+      const url = await FileService.instance.generateSignedUrl(userData.profilePicture);
+      userData.profilePicture = url;
     }
-    return user;
+    return userData;
   }
 
   async updateUserProfilePicture(userId: string, file: Express.Multer.File) {
-    const buffer = await sharp(file.buffer).resize({ height: 100, width: 100, fit: "contain" }).toBuffer();
+    const name = await FileService.instance.uploadFileToS3(file);
 
-    const name = await FileService.instance.uploadFileToS3(file, buffer);
-
-    const user = await User.findByIdAndUpdate(userId, { profilePicture: name });
+    await User.findByIdAndUpdate(userId, { profilePicture: name });
 
     return name;
   }
@@ -79,5 +71,37 @@ export class UsersService {
     const user = await User.create({ email, username, password, role, profilePicture, bio });
 
     return await user.save();
+  }
+
+  async updateProfileInfo(userId: string, updateUserDto: UpdateUserDTO) {
+    const errors = await validate(updateUserDto);
+
+    if (errors.length > 0) {
+      throw new BadRequestException(Object.values(errors[0].constraints!)[0]);
+    }
+
+    const updateData: Partial<UpdateUserDTO> = {};
+
+    (Object.keys(updateUserDto) as (keyof UpdateUserDTO)[]).forEach((key) => {
+      const value = updateUserDto[key];
+
+      if (value !== undefined && value !== null) {
+        updateData[key] = value;
+      }
+    });
+
+    if (Object.keys(updateData).length === 0) {
+      throw new BadRequestException("No valid fields provided for update.");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, { $set: updateData }, { new: true });
+
+    if (!updatedUser) {
+      throw new NotFoundException("User not found");
+    }
+
+    const { password, ...userData } = updatedUser.toObject();
+
+    return userData;
   }
 }

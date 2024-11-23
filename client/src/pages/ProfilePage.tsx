@@ -8,9 +8,11 @@ import ChangeEmailForm from "../features/profile/components/ChangeEmailForm";
 import ChangePasswordForm from "../features/profile/components/ChangePasswordForm";
 import ChangeUsernameForm from "../features/profile/components/ChangeUsernameForm";
 import ProfileField from "../features/profile/components/ProfileField";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 function ProfilePage() {
-  const user = useLoaderData() as User;
+  const user = useSelector((state: RootState) => state.auth.user) as User;
 
   return (
     <section className="pt-10">

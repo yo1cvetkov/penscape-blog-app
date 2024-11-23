@@ -1,10 +1,18 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQueryWithReauth from "../../../baseQuery";
 import { authApiSlice } from "../../auth/api/authApiSlice";
+import { setUser } from "../../auth/state/authSlice";
+import { User } from "../../auth/types/User";
 
 interface UpdateAvatarParams {
   formData: FormData;
   id: string;
+}
+
+interface UpdateUserInfoParams {
+  username?: string;
+  email?: string;
+  bio?: string;
 }
 
 export const profileApiSlice = createApi({
@@ -18,7 +26,21 @@ export const profileApiSlice = createApi({
           method: "PATCH",
           body: formData,
         }),
-        async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
+          try {
+            await queryFulfilled;
+            dispatch(authApiSlice.util.invalidateTags(["User"]));
+          } catch {}
+        },
+      }),
+      updateUserInfo: builder.mutation<User, UpdateUserInfoParams>({
+        query: (data) => ({
+          url: `/users`,
+          method: "PUT",
+          body: data,
+          credentials: "include",
+        }),
+        async onQueryStarted(_, { dispatch, queryFulfilled }) {
           try {
             await queryFulfilled;
 
@@ -30,4 +52,4 @@ export const profileApiSlice = createApi({
   },
 });
 
-export const { useUpdateAvatarMutation } = profileApiSlice;
+export const { useUpdateAvatarMutation, useUpdateUserInfoMutation } = profileApiSlice;

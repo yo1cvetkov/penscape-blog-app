@@ -6,6 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FormInput from "../../../components/ui/FormInput";
 import FormInputError from "../../../components/ui/FormInputError";
 import Button from "../../../components/ui/Button";
+import { useUpdateUserInfoMutation } from "../api/profileApiSlice";
+import toast from "react-hot-toast";
+import { useClose } from "@headlessui/react";
 
 function ChangeEmailForm() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -17,8 +20,20 @@ function ChangeEmailForm() {
     },
   });
 
-  const onSubmit: SubmitHandler<ChangeEmailSchema> = (data) => {
-    console.log(data);
+  let close = useClose();
+
+  const [updateUserInfoMutation, { isLoading }] = useUpdateUserInfoMutation();
+
+  const onSubmit: SubmitHandler<ChangeEmailSchema> = async (data) => {
+    try {
+      await updateUserInfoMutation({ email: data.email }).unwrap();
+
+      close();
+
+      toast.success("User email updated successfully.");
+    } catch (error) {
+      toast.error("Failed to update user email.");
+    }
   };
 
   return (
@@ -30,7 +45,9 @@ function ChangeEmailForm() {
       />
       <FormInputError>{form.formState.errors.email?.message}</FormInputError>
       <div className="flex justify-end mt-4">
-        <Button type="submit">Change</Button>
+        <Button type="submit" disabled={isLoading || form.formState.isSubmitting}>
+          {isLoading || form.formState.isSubmitting ? "Updating..." : "Change"}
+        </Button>
       </div>
     </form>
   );

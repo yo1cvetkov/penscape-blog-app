@@ -5,21 +5,18 @@ import { Button } from "@headlessui/react";
 import { useUpdateAvatarMutation } from "../api/profileApiSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import axios from "axios";
+import Spinner from "../../../components/ui/Spinner";
+import toast from "react-hot-toast";
 
 function AvatarUpload() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
-  const [avatar, setAvatar] = useState<string | null>(null);
-
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const user = useSelector((state: RootState) => state.auth.user);
 
-  console.log(user);
-
-  const [updateAvatarMutation, { isLoading }] = useUpdateAvatarMutation();
+  const [updateAvatarMutation, { isLoading: isUploading }] = useUpdateAvatarMutation();
 
   const onUpload = () => {
     if (fileInputRef.current) {
@@ -49,35 +46,32 @@ function AvatarUpload() {
 
     try {
       await updateAvatarMutation({ formData, id: user?._id }).unwrap();
-      // const url = await axios
-      //   .patch(`http://localhost:3000/api/users/${user._id}/avatar`, formData, {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data",
-      //     },
-      //     withCredentials: true,
-      //   })
-      //   .then((res) => res.data);
-
-      // setAvatar(url);
-
-      // console.log(url);
+      setSelectedFile(null);
+      setPreview(null);
     } catch (error) {
-      console.log(error);
+      toast.error("Failed to update avatar");
     }
   };
 
   return (
     <form onSubmit={onUpdateAvatar}>
-      <input ref={fileInputRef} hidden name="file" type="file" aria-hidden="true" onChange={onFileChange} />
+      <input disabled={isUploading} accept="image/*" ref={fileInputRef} hidden name="file" type="file" aria-hidden="true" onChange={onFileChange} />
       <button
         className={cn(
           "relative block overflow-hidden bg-gray-200 border border-gray-400 rounded-full cursor-pointer size-20 group",
-          preview ? "border-none" : "border-dashed"
+          preview || user?.profilePicture ? "border-none" : "border-dashed"
         )}
         onClick={onUpload}
       >
         {preview ? (
-          <img src={preview} className="absolute inset-0 object-cover w-full h-full overflow-hidden" />
+          <img src={preview} alt={`${user?.username}'s preview profile picture`} className="absolute inset-0 object-cover w-full h-full overflow-hidden" />
+        ) : user?.profilePicture ? (
+          <>
+            <img src={user.profilePicture} className="object-cover w-full h-full" alt={`${user.username}'s profile picture`} />
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-xs text-white transition opacity-0 bg-gray-800/50 group-hover:opacity-100">
+              Change
+            </div>
+          </>
         ) : (
           <div className="absolute flex flex-col items-center transition-all duration-300 -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
             <ArrowUpTrayIcon className="transition-all duration-200 size-4 fill-gray-500 group-hover:-translate-y-2" />
@@ -86,7 +80,11 @@ function AvatarUpload() {
             </span>
           </div>
         )}
-        <img src={user?.profilePicture} />
+        {isUploading && (
+          <div className="absolute inset-0 flex items-center justify-center cursor-not-allowed bg-black/30">
+            <Spinner />
+          </div>
+        )}
       </button>
       {selectedFile ? (
         <div className="flex items-center gap-x-2">
@@ -96,11 +94,6 @@ function AvatarUpload() {
           </Button>
         </div>
       ) : null}
-      {avatar && (
-        <div>
-          <img src={avatar} />
-        </div>
-      )}
     </form>
   );
 }
