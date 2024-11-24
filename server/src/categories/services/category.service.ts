@@ -27,4 +27,8 @@ export class CategoryService {
 
     return await newCategory.save();
   }
+
+  async getAllCategories() {
+    return await Category.find();
+  }
 }
