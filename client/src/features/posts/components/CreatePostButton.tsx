@@ -1,7 +1,13 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, matchPath, useLocation } from "react-router-dom";
 
 function CreatePostButton() {
+  const location = useLocation();
+
+  const isMatch = matchPath("/post/create/*", location.pathname);
+
+  if (isMatch) return null;
+
   return (
     <div className="group">
       <div className="fixed p-4 rounded-full bg-zinc-400 size-16 bottom-10 group-hover:animate-ping animate-once right-10"></div>

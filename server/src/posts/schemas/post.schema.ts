@@ -10,7 +10,7 @@ const PostSchema: Schema = new Schema<IPost>(
       trim: true,
     },
     content: {
-      type: Object,
+      type: String,
       required: function () {
         if (this.status === PostStatus.DRAFT) return false;
         else return true;

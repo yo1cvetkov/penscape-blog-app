@@ -10,7 +10,7 @@ import { JSONValue } from "../../shared/types/JSONValue";
 
 export interface IPost extends Document {
   title: string;
-  content: {};
+  content: string;
   authorId: typeof ObjectId;
   categoryId: typeof ObjectId;
   tags: string[];

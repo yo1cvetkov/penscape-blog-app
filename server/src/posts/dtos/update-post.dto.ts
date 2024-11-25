@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { JSONValue } from "../../shared/types/JSONValue";
 
 export class UpdatePostDTO {
-  @IsNotEmpty()
+  @IsString()
   @IsOptional()
-  content: JSONValue;
+  content?: string;
 }

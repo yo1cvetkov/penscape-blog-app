@@ -38,11 +38,11 @@ export class PostsService {
   }
 
   public async updatePost(postId: string, updatePostDto: UpdatePostDTO) {
-    // const errors = await validate(updatePostDto);
+    const errors = await validate(updatePostDto);
 
-    // if (errors.length > 0) {
-    //   throw new BadRequestException(Object.values(errors[0].constraints!)[0]);
-    // }
+    if (errors.length > 0) {
+      throw new BadRequestException(Object.values(errors[0].constraints!)[0]);
+    }
 
     const updateData: Partial<UpdatePostDTO> = {
       content: updatePostDto.content,

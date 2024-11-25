@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 function CreatePostPage() {
   const { data: categories, isLoading: isLoadingCategories, isError: isCategoriesError } = useGetCategoriesQuery();
-  const [createDraftPostMutation, { isLoading, isError, error }] = useCreateDraftPostMutation();
+  const [createDraftPostMutation] = useCreateDraftPostMutation();
 
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [postTitle, setPostTitle] = useState<string>("");
