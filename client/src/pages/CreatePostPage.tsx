@@ -1,69 +1,57 @@
-import React, { useState } from "react";
-
-import "@blocknote/core/fonts/inter.css";
-import { BlockNoteView } from "@blocknote/mantine";
-import "@blocknote/mantine/style.css";
-import { useCreateBlockNote } from "@blocknote/react";
-import { Block } from "@blocknote/core";
+import { useState } from "react";
+import { Field } from "@headlessui/react";
 import CardWrapper from "../components/ui/CardWrapper";
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Field, Select } from "@headlessui/react";
-import FormLabel from "../components/ui/FormLabel";
 import FormInput from "../components/ui/FormInput";
-import clsx from "clsx";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import FormLabel from "../components/ui/FormLabel";
 import { useGetCategoriesQuery } from "../features/categories/api/categoryApiSlice";
 import { Category } from "../features/categories/types/Category";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import CategoryCombobox from "../features/posts/components/CategoryCombobox";
+import Button from "../components/ui/Button";
+import { useCreateDraftPostMutation } from "../features/posts/api/postsApiSlice";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function CreatePostPage() {
-  const { data, isLoading, isError } = useGetCategoriesQuery();
+  const { data: categories, isLoading: isLoadingCategories, isError: isCategoriesError } = useGetCategoriesQuery();
+  const [createDraftPostMutation, { isLoading, isError, error }] = useCreateDraftPostMutation();
 
-  const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [postTitle, setPostTitle] = useState<string>("");
 
-  const filteredCategories =
-    query === ""
-      ? data
-      : data?.filter((category) => {
-          return category.name.toLowerCase().includes(query.toLowerCase());
-        });
+  const navigate = useNavigate();
 
-  console.log(selected);
+  const submitDraft = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    try {
+      const draftPost = await createDraftPostMutation({ categoryId: selectedCategory?._id!, title: postTitle }).unwrap();
+
+      navigate(draftPost._id, { viewTransition: true });
+    } catch (error) {
+      toast.error("Failed to create");
+
+      console.log(error);
+    }
+  };
+
   return (
     <section className="w-full py-6 mx-auto">
       <div className="max-w-lg pt-32 mx-auto space-y-8">
         <h1 className="w-full mx-auto text-4xl font-bold">Create new post</h1>
-        {isLoading ? (
+        {isLoadingCategories ? (
           <div> Loading...</div>
         ) : (
           <CardWrapper className="mx-auto">
-            <form>
+            <form onSubmit={submitDraft} className="space-y-4">
               <Field as="div">
                 <FormLabel>Post title</FormLabel>
-                <FormInput />
+                <FormInput value={postTitle} onChange={(event) => setPostTitle(event.target.value)} />
               </Field>
-              <Field as="div">
-                <FormLabel>Post category</FormLabel>
-                <div className="relative">
-                  <Select
-                    value={selected}
-                    onChange={(event) => setSelected(event.target.value)}
-                    className={clsx(
-                      "mt-3 block w-full appearance-none rounded-lg border bg-white py-1.5 px-3 text-sm/6 text-gray-800",
-                      "focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-gray-200/25",
-                      // Make the text of each option black on Windows
-                      "*:text-black"
-                    )}
-                  >
-                    {data?.map((category) => (
-                      <option key={category._id} value={category._id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </Select>
-                  <ChevronDownIcon className="group pointer-events-none absolute top-2.5 right-2.5 size-4 text-gray-600" aria-hidden="true" />
-                </div>
-              </Field>
+              <CategoryCombobox categories={categories as Category[]} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+
+              <div className="flex items-center justify-end">
+                <Button type="submit">Continue</Button>
+              </div>
             </form>
           </CardWrapper>
         )}

@@ -1,14 +1,20 @@
 import { Block } from "@blocknote/core";
+import "@blocknote/core/fonts/inter.css";
+import "@blocknote/mantine/style.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import { useCreateBlockNote } from "@blocknote/react";
 import React, { useState } from "react";
+import { Post } from "../types/Post";
+import ButtonComponent from "../../../components/ui/Button";
+import { useUpdatePostMutation } from "../api/postsApiSlice";
+import toast from "react-hot-toast";
 
-function PostEditor() {
+function PostEditor({ post }: { post: Post }) {
   const editor = useCreateBlockNote({
     initialContent: [
       {
         type: "heading",
-        content: "Your title goes here",
+        content: post.title,
       },
       {
         type: "paragraph",
@@ -17,17 +23,34 @@ function PostEditor() {
     ],
   });
 
+  const [updatePostMutation, { isLoading }] = useUpdatePostMutation();
+
   const [blocks, setBlocks] = useState<Block[]>([]);
 
   return (
-    <BlockNoteView
-      className="mt-10"
-      onChange={() => {
-        setBlocks(editor.document);
-      }}
-      editor={editor}
-      theme={"light"}
-    />
+    <>
+      <ButtonComponent
+        className="block"
+        onClick={async () => {
+          console.log("clicked");
+          try {
+            await updatePostMutation({ id: post._id, content: JSON.stringify(blocks) }).unwrap();
+          } catch (error) {
+            toast.error("Post failed to update");
+          }
+        }}
+      >
+        Edit post
+      </ButtonComponent>
+      <BlockNoteView
+        className="mt-10"
+        onChange={() => {
+          setBlocks(editor.document);
+        }}
+        editor={editor}
+        theme={"light"}
+      />
+    </>
   );
 }
 

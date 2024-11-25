@@ -1,7 +1,8 @@
 import { Schema } from "mongoose";
 import { PostStatus } from "../../shared/types/PostStatus.enum";
+import { IPost } from "../models/post.model";
 
-const PostSchema: Schema = new Schema(
+const PostSchema: Schema = new Schema<IPost>(
   {
     title: {
       type: String,
@@ -10,7 +11,10 @@ const PostSchema: Schema = new Schema(
     },
     content: {
       type: Object,
-      required: [true, "Content is required"],
+      required: function () {
+        if (this.status === PostStatus.DRAFT) return false;
+        else return true;
+      },
     },
     authorId: {
       type: Schema.Types.ObjectId,

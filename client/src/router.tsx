@@ -6,6 +6,8 @@ import { checkUserLoader } from "./loaders/checkUserLoader";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import CreatePostPage from "./pages/CreatePostPage";
+import CreatePostIdPage from "./pages/CreatePostIdPage";
+import PostIdPage from "./pages/PostIdPage";
 
 export const router = createBrowserRouter([
   {
@@ -31,8 +33,18 @@ export const router = createBrowserRouter([
         loader: checkUserLoader,
       },
       {
+        path: "/post/:id",
+        element: <PostIdPage />,
+        loader: checkUserLoader,
+      },
+      {
         path: "/post/create",
         element: <CreatePostPage />,
+        loader: checkUserLoader,
+      },
+      {
+        path: "/post/create/:id",
+        element: <CreatePostIdPage />,
         loader: checkUserLoader,
       },
     ],
