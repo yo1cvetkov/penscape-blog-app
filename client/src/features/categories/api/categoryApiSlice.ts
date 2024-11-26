@@ -13,8 +13,14 @@ export const categoriesApiSlice = createApi({
           method: "GET",
         }),
       }),
+      getCategory: builder.query<Category, { id: string }>({
+        query: ({ id }) => ({
+          url: `/category/${id}`,
+          method: "GET",
+        }),
+      }),
     };
   },
 });
 
-export const { useGetCategoriesQuery } = categoriesApiSlice;
+export const { useGetCategoriesQuery, useGetCategoryQuery } = categoriesApiSlice;

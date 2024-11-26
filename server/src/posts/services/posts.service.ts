@@ -46,6 +46,7 @@ export class PostsService {
 
     const updateData: Partial<UpdatePostDTO> = {
       content: updatePostDto.content,
+      tags: updatePostDto.tags,
     };
 
     // (Object.keys(updatePostDto) as (keyof UpdatePostDTO)[]).forEach((key) => {
@@ -59,8 +60,6 @@ export class PostsService {
     if (Object.keys(updatePostDto).length === 0) {
       throw new BadRequestException("no valid fields provided.");
     }
-
-    console.log(updateData);
 
     const updatePost = await Post.findByIdAndUpdate(postId, { $set: updateData }, { new: true });
 
@@ -91,5 +90,15 @@ export class PostsService {
     const newPost = await Post.create(createPostDto);
 
     return await newPost.save();
+  }
+
+  public async publishPost(postId: string) {
+    // TODO: Check if user is author
+
+    const updatePost = await Post.findByIdAndUpdate(postId, { status: PostStatus.PUBLISHED });
+
+    if (!updatePost) {
+      throw new NotFoundException("Post not found.");
+    }
   }
 }

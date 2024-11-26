@@ -39,10 +39,10 @@ export class PostsController {
 
     console.log("body", req.body);
 
-    // const updatePostDto = plainToInstance(UpdatePostDTO, req.body);
+    const updatePostDto = plainToInstance(UpdatePostDTO, req.body);
 
     try {
-      const post = await PostsService.instance.updatePost(postId, req.body);
+      const post = await PostsService.instance.updatePost(postId, updatePostDto);
 
       res.status(200).json(post);
     } catch (error) {
@@ -89,6 +89,26 @@ export class PostsController {
     } catch (error) {
       if (error instanceof BadRequestException) {
         res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Something went wrong." });
+      }
+    }
+  }
+
+  async publishPost(req: Request, res: Response) {
+    const postId = req.params.id as string;
+
+    if (!postId) {
+      res.status(400).json({ message: "Post id is missing" });
+    }
+
+    try {
+      await PostsService.instance.publishPost(postId);
+
+      res.status(201).json({ message: "Published post" });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        res.status(404).json({ message: "Post not found" });
       } else {
         res.status(500).json({ message: "Something went wrong." });
       }

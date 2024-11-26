@@ -8,6 +8,7 @@ import ProfilePage from "./pages/ProfilePage";
 import CreatePostPage from "./pages/CreatePostPage";
 import CreatePostIdPage from "./pages/CreatePostIdPage";
 import PostIdPage from "./pages/PostIdPage";
+import PublishPostIdPage from "./pages/PublishPostIdPage";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +46,11 @@ export const router = createBrowserRouter([
       {
         path: "/post/create/:id",
         element: <CreatePostIdPage />,
+        loader: checkUserLoader,
+      },
+      {
+        path: "/post/create/:id/publish",
+        element: <PublishPostIdPage />,
         loader: checkUserLoader,
       },
     ],

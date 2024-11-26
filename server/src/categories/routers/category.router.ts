@@ -8,5 +8,6 @@ const router = Router();
 
 router.post("/", authenticate, categoryController.createCategory);
 router.get("/", authenticate, categoryController.getAllCategories);
+router.get("/:id", authenticate, categoryController.getCategory);
 
 export default router;

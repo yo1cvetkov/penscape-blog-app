@@ -34,16 +34,22 @@ export const postsApiSlice = createApi({
         }),
         providesTags: (result, error, { id }) => [{ type: "Post", id }],
       }),
-      updatePost: builder.mutation<Post, { id: string; content: any }>({
+      updatePost: builder.mutation<Post, { id: string; content?: any; tags?: string[] }>({
         query: (updateData) => ({
           url: `/posts/${updateData.id}`,
           method: "PATCH",
-          body: { content: updateData.content },
+          body: { content: updateData.content, tags: updateData.tags },
         }),
         invalidatesTags: (result, error, { id }) => [{ type: "Post", id }],
+      }),
+      publishPost: builder.mutation<void, { id: string }>({
+        query: ({ id }) => ({
+          url: `/posts/${id}/publish`,
+          method: "PATCH",
+        }),
       }),
     };
   },
 });
 
-export const { useGetPostsQuery, useCreateDraftPostMutation, useGetPostQuery, useUpdatePostMutation } = postsApiSlice;
+export const { useGetPostsQuery, useCreateDraftPostMutation, useGetPostQuery, useUpdatePostMutation, usePublishPostMutation } = postsApiSlice;
