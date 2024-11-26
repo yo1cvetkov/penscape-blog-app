@@ -4,14 +4,19 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import FormLabel from "../../../components/ui/FormLabel";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
+import { cn } from "../../../helpers/cn";
+import FormInputError from "../../../components/ui/FormInputError";
 
 interface CategoryComboboxProps {
   categories: Category[];
   selectedCategory: Category | null;
   setSelectedCategory: React.Dispatch<SetStateAction<Category | null>>;
+  setSelectedCategoryError: React.Dispatch<SetStateAction<string | undefined>>;
+  hasErrors: boolean;
+  errorMessage?: string;
 }
 
-function CategoryCombobox({ categories, selectedCategory, setSelectedCategory }: CategoryComboboxProps) {
+function CategoryCombobox({ categories, selectedCategory, setSelectedCategory, hasErrors, errorMessage, setSelectedCategoryError }: CategoryComboboxProps) {
   const [query, setQuery] = useState<string>("");
 
   const filteredCategories =
@@ -27,14 +32,22 @@ function CategoryCombobox({ categories, selectedCategory, setSelectedCategory }:
         Post category
       </FormLabel>
       <Description className={"text-xs mb-2 text-gray-500"}>Please provide appropriate category for your desired post.</Description>
-      <Combobox value={selectedCategory} onChange={setSelectedCategory} onClose={() => setQuery("")}>
+      <Combobox
+        value={selectedCategory}
+        onChange={(category) => {
+          setSelectedCategory(category);
+          setSelectedCategoryError(undefined);
+        }}
+        onClose={() => setQuery("")}
+      >
         <div className="relative">
           <ComboboxInput
             id="category"
             placeholder="Select post category..."
-            className={
-              "w-full rounded-lg border py-1.5 px-3 text-sm/6 focus:outline-none data-[focus]:outline-gray-700/25  data-[focus]:outline-2 data-[focus]:-outline-offset-2"
-            }
+            className={cn(
+              "w-full rounded-lg border py-1.5 px-3 text-sm/6 focus:outline-none data-[focus]:outline-gray-700/25  data-[focus]:outline-2 data-[focus]:-outline-offset-2",
+              hasErrors && "border-red-500"
+            )}
             aria-label="Category"
             displayValue={(category: Category | null) => {
               if (!category) {
@@ -79,6 +92,7 @@ function CategoryCombobox({ categories, selectedCategory, setSelectedCategory }:
           )}
         </ComboboxOptions>
       </Combobox>
+      <FormInputError>{errorMessage}</FormInputError>
     </Field>
   );
 }
