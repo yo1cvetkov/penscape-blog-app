@@ -17,6 +17,7 @@ export interface IPost extends Document {
   views: number;
   likes: number;
   status: PostStatus;
+  comments: number;
 }
 
 const Post = mongoose.model<IPost>("Post", PostSchema);

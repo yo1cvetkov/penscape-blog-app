@@ -33,7 +33,7 @@ function PostIdInfo({ post }: PostIdInfoProps) {
           </div>
           <div className="flex items-center gap-x-2">
             <ChatBubbleOvalLeftIcon className="text-gray-500 size-5" />
-            <span className="text-xs text-gray-500">0</span>
+            <span className="text-xs text-gray-500">{post.comments}</span>
           </div>
           <span className="text-gray-500 ">·</span>
           <span className="text-sm text-gray-500">

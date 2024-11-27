@@ -34,6 +34,10 @@ const PostSchema: Schema = new Schema<IPost>(
       type: Number,
       default: 0,
     },
+    comments: {
+      type: Number,
+      default: 0,
+    },
     status: {
       type: String,
       enum: Object.values(PostStatus),

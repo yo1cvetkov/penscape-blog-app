@@ -8,6 +8,7 @@ export type Post = {
   categoryId: string;
   views: number;
   likes: number;
+  comments: number;
   status: PostStatus;
   tags?: string[];
   createdAt?: string;
