@@ -7,6 +7,7 @@ import { PostsService } from "../services/posts.service";
 import { CreateDraftPostDTO } from "../dtos/create-draft-post.dto";
 import { NotFoundException } from "../../shared/exceptions/NotFoundException";
 import { UpdatePostDTO } from "../dtos/update-post.dto";
+import PostSchema from "../schemas/post.schema";
 
 export class PostsController {
   async createNewPost(req: Request, res: Response) {
@@ -100,6 +101,7 @@ export class PostsController {
 
     if (!postId) {
       res.status(400).json({ message: "Post id is missing" });
+      return;
     }
 
     try {
@@ -111,6 +113,27 @@ export class PostsController {
         res.status(404).json({ message: "Post not found" });
       } else {
         res.status(500).json({ message: "Something went wrong." });
+      }
+    }
+  }
+
+  async incrementViews(req: Request, res: Response) {
+    const postId = req.params.id as string;
+
+    if (!postId) {
+      res.status(400).json({ message: "Post id is missing" });
+      return;
+    }
+
+    try {
+      await PostsService.instance.incrementViews(postId);
+
+      res.status(200).json({ message: "Viewed successfully" });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        res.status(404).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Something went wrong" });
       }
     }
   }

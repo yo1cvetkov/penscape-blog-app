@@ -4,7 +4,7 @@ import Separator from "../../../components/ui/Separator";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { Link } from "react-router-dom";
-import { ChatBubbleOvalLeftIcon, EyeIcon, HandThumbUpIcon, PencilSquareIcon, ShareIcon } from "@heroicons/react/24/outline";
+import { ChatBubbleOvalLeftIcon, EllipsisHorizontalIcon, EyeIcon, HandThumbUpIcon, PencilSquareIcon, ShareIcon } from "@heroicons/react/24/outline";
 import { Button } from "@headlessui/react";
 
 interface PostIdInfoProps {
@@ -47,18 +47,25 @@ function PostIdInfo({ post }: PostIdInfoProps) {
         </div>
         <div className="flex items-center gap-x-4">
           {isCurrentUserAuthor() ? (
-            <Link
-              to={`/post/create/${post._id}`}
-              viewTransition
-              className="inline-flex hover:bg-zinc-100/50 transition duration-200 text-sm text-zinc-600 px-3 py-1.5 items-center border gap-x-2 border-zinc-500/30 rounded-lg"
-            >
-              <PencilSquareIcon className="size-5 text-zinc-600" />
-              Edit post
-            </Link>
+            <div className="flex items-center gap-x-4">
+              <Link
+                to={`/post/create/${post._id}`}
+                viewTransition
+                className="inline-flex hover:bg-zinc-100/50 transition duration-200 text-sm text-zinc-600 px-3 py-1.5 items-center border gap-x-2 border-zinc-500/30 rounded-lg"
+              >
+                <PencilSquareIcon className="size-5 text-zinc-600" />
+                Edit post
+              </Link>
+              <div>
+                <EllipsisHorizontalIcon className="size-6 text-zinc-600" />
+              </div>
+            </div>
           ) : null}
-          <Button>
-            <ShareIcon className="text-gray-500 size-4" />
-          </Button>
+          {!isCurrentUserAuthor() && (
+            <Button>
+              <ShareIcon className="text-gray-500 size-4" />
+            </Button>
+          )}
         </div>
       </div>
       <Separator />

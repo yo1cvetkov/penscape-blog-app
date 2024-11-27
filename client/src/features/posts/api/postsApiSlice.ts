@@ -48,8 +48,16 @@ export const postsApiSlice = createApi({
           method: "PATCH",
         }),
       }),
+      incrementViews: builder.mutation<void, string>({
+        query: (id) => ({
+          url: `/posts/${id}/views`,
+          method: "PATCH",
+        }),
+        invalidatesTags: (result, error, id) => [{ type: "Post", id }],
+      }),
     };
   },
 });
 
-export const { useGetPostsQuery, useCreateDraftPostMutation, useGetPostQuery, useUpdatePostMutation, usePublishPostMutation } = postsApiSlice;
+export const { useGetPostsQuery, useCreateDraftPostMutation, useGetPostQuery, useUpdatePostMutation, usePublishPostMutation, useIncrementViewsMutation } =
+  postsApiSlice;

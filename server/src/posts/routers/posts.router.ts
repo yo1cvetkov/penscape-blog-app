@@ -14,5 +14,6 @@ router.post("/draft", authenticate, postsController.createNewDraftPost);
 router.get("/:id", authenticate, postsController.getPostById);
 router.patch("/:id", authenticate, postsController.updatePost);
 router.patch("/:id/publish", authenticate, postsController.publishPost);
+router.patch("/:id/views", authenticate, postsController.incrementViews);
 
 export default router;

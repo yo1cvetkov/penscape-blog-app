@@ -101,4 +101,16 @@ export class PostsService {
       throw new NotFoundException("Post not found.");
     }
   }
+
+  public async incrementViews(postId: string) {
+    // TODO: Limit the views to only one per user
+
+    const updatePost = await Post.findByIdAndUpdate(postId, {
+      $inc: { views: 1 },
+    });
+
+    if (!updatePost) {
+      throw new NotFoundException("Post not found");
+    }
+  }
 }
