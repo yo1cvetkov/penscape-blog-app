@@ -10,4 +10,6 @@ export type Post = {
   likes: number;
   status: PostStatus;
   tags?: string[];
+  createdAt?: string;
+  updatedAt?: string;
 };

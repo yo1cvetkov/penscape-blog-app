@@ -1,8 +1,6 @@
-import React from "react";
 import { useParams } from "react-router-dom";
 import { useGetPostQuery } from "../features/posts/api/postsApiSlice";
 import PostViewer from "../features/posts/components/PostViewer";
-import { useGetCategoryQuery } from "../features/categories/api/categoryApiSlice";
 import CategoryBadge from "../features/categories/components/CategoryBadge";
 import PublishButton from "../features/posts/components/PublishButton";
 

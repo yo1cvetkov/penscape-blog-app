@@ -8,5 +8,6 @@ const router = Router();
 
 router.patch("/:id/avatar", upload.single("file"), userController.updateUserAvatar);
 router.put("/", userController.updateUserInfo);
+router.get("/:id", userController.getUserById);
 
 export default router;

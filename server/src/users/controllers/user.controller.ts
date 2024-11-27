@@ -65,4 +65,25 @@ export class UserController {
       }
     }
   }
+
+  async getUserById(req: Request, res: Response) {
+    const userId = req.params.id as string;
+
+    if (!userId) {
+      res.status(400).json({ message: "User id is required." });
+      return;
+    }
+
+    try {
+      const user = await UsersService.instance.findUserById(userId);
+
+      res.status(200).json(user);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        res.status(404).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Something went wrong" });
+      }
+    }
+  }
 }
