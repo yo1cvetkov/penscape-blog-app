@@ -1,11 +1,12 @@
-import { format } from "date-fns";
-import { Post } from "../types/Post";
-import Separator from "../../../components/ui/Separator";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
-import { Link } from "react-router-dom";
-import { ChatBubbleOvalLeftIcon, EllipsisHorizontalIcon, EyeIcon, HandThumbUpIcon, PencilSquareIcon, ShareIcon } from "@heroicons/react/24/outline";
 import { Button } from "@headlessui/react";
+import { ChatBubbleOvalLeftIcon, EllipsisHorizontalIcon, EyeIcon, PencilSquareIcon, ShareIcon } from "@heroicons/react/24/outline";
+import { format } from "date-fns";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import Separator from "../../../components/ui/Separator";
+import { RootState } from "../../../store";
+import { Post } from "../types/Post";
+import LikeButton from "./LikeButton";
 
 interface PostIdInfoProps {
   post: Post;
@@ -27,10 +28,7 @@ function PostIdInfo({ post }: PostIdInfoProps) {
             <EyeIcon className="text-gray-500 size-5" />
             <span className="text-xs text-gray-500">{post.views}</span>
           </div>
-          <Button className="flex items-center gap-x-2">
-            <HandThumbUpIcon className="text-gray-500 size-5" />
-            <span className="text-xs text-gray-500">{post.likes}</span>
-          </Button>
+          <LikeButton postId={post._id} likes={post.likes} />
           <div className="flex items-center gap-x-2">
             <ChatBubbleOvalLeftIcon className="text-gray-500 size-5" />
             <span className="text-xs text-gray-500">{post.comments}</span>

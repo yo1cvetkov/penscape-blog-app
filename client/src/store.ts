@@ -6,6 +6,7 @@ import { profileApiSlice } from "./features/profile/api/profileApiSlice";
 import { categoriesApiSlice } from "./features/categories/api/categoryApiSlice";
 import { usersApiSlice } from "./features/users/api/usersApiSlice";
 import { commentsApiSlice } from "./features/comments/api/commentsApiSlice";
+import { likeApiSlice } from "./features/likes/api/likesApiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     [categoriesApiSlice.reducerPath]: categoriesApiSlice.reducer,
     [usersApiSlice.reducerPath]: usersApiSlice.reducer,
     [commentsApiSlice.reducerPath]: commentsApiSlice.reducer,
+    [likeApiSlice.reducerPath]: likeApiSlice.reducer,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware()
@@ -24,7 +26,8 @@ export const store = configureStore({
       .concat(profileApiSlice.middleware)
       .concat(categoriesApiSlice.middleware)
       .concat(usersApiSlice.middleware)
-      .concat(commentsApiSlice.middleware);
+      .concat(commentsApiSlice.middleware)
+      .concat(likeApiSlice.middleware);
   },
 });
 
