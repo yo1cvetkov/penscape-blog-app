@@ -27,10 +27,10 @@ function PostIdInfo({ post }: PostIdInfoProps) {
             <EyeIcon className="text-gray-500 size-5" />
             <span className="text-xs text-gray-500">{post.views}</span>
           </div>
-          <div className="flex items-center gap-x-2">
+          <Button className="flex items-center gap-x-2">
             <HandThumbUpIcon className="text-gray-500 size-5" />
             <span className="text-xs text-gray-500">{post.likes}</span>
-          </div>
+          </Button>
           <div className="flex items-center gap-x-2">
             <ChatBubbleOvalLeftIcon className="text-gray-500 size-5" />
             <span className="text-xs text-gray-500">{post.comments}</span>
