@@ -15,4 +15,5 @@ router.use("/users", authenticate, usersRoutes);
 router.use("/category", categoryRoutes);
 router.use("/comments", commentsRouter);
 router.use("/likes", likesRouter);
+
 export default router;
