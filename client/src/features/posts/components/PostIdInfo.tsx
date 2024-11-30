@@ -7,6 +7,7 @@ import Separator from "../../../components/ui/Separator";
 import { RootState } from "../../../store";
 import { Post } from "../types/Post";
 import LikeButton from "./LikeButton";
+import PostViews from "./PostViews";
 
 interface PostIdInfoProps {
   post: Post;
@@ -24,10 +25,7 @@ function PostIdInfo({ post }: PostIdInfoProps) {
       <Separator />
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-4">
-          <div className="flex items-center gap-x-2">
-            <EyeIcon className="text-gray-500 size-5" />
-            <span className="text-xs text-gray-500">{post.views}</span>
-          </div>
+          <PostViews views={post.views} />
           <LikeButton postId={post._id} likes={post.likes} />
           <div className="flex items-center gap-x-2">
             <ChatBubbleOvalLeftIcon className="text-gray-500 size-5" />
