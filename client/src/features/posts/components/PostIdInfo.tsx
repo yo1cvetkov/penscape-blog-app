@@ -8,6 +8,7 @@ import { RootState } from "../../../store";
 import { Post } from "../types/Post";
 import LikeButton from "./LikeButton";
 import PostViews from "./PostViews";
+import CommentsHeader from "../../comments/components/CommentsHeader";
 
 interface PostIdInfoProps {
   post: Post;
@@ -27,10 +28,7 @@ function PostIdInfo({ post }: PostIdInfoProps) {
         <div className="flex items-center gap-x-4">
           <PostViews views={post.views} />
           <LikeButton postId={post._id} likes={post.likes} />
-          <div className="flex items-center gap-x-2">
-            <ChatBubbleOvalLeftIcon className="text-gray-500 size-5" />
-            <span className="text-xs text-gray-500">{post.comments}</span>
-          </div>
+          <CommentsHeader commentsCount={post.comments} />
           <span className="text-gray-500 ">·</span>
           <span className="text-sm text-gray-500">
             Last updated at <span className="font-semibold text-zinc-800">{format(new Date(post.updatedAt as string), "dd MMM yyyy")}</span>
