@@ -42,4 +42,16 @@ export class LikesService {
 
     return await like.save();
   }
+
+  public async getPostLikes(postId: string) {
+    const findPost = await Post.findById(postId);
+
+    if (!findPost) {
+      throw new NotFoundException("Post not found");
+    }
+
+    const likes = await Like.find({ postId });
+
+    return likes;
+  }
 }
